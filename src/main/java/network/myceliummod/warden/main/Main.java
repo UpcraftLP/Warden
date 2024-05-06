@@ -1,10 +1,12 @@
-package network.myceliummod.warden;
+package network.myceliummod.warden.main;
+
+import network.myceliummod.warden.DomainRules;
+import network.myceliummod.warden.ZoneIdentifier;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.MatchResult;
 
 public class Main {
 
