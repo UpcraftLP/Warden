@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * Holds the rules used to match a domain. Currently, rules can specify a domain and all subdomains, or a subdomain and

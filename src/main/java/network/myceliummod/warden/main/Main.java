@@ -2,6 +2,7 @@ package network.myceliummod.warden.main;
 
 import network.myceliummod.warden.DomainRules;
 import network.myceliummod.warden.ZoneIdentifier;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -22,7 +23,7 @@ public class Main {
             for (String arg : args) {
                 List<MatchResult> matchingFiles = new LinkedList<>();
 
-                boolean result = checkFile(rules, new File(arg), matchingFiles);
+                boolean result = checkFiles(rules, new File(arg), matchingFiles);
                 if (i == 0) {
                     if (!result) {
                         System.out.println("No matching files were found.");
@@ -70,7 +71,8 @@ public class Main {
      * @param target The target file. If the target is a directory it will be checked recursively.
      * @return True if one or more files checked were downloaded from a site matching the list of domain rules.
      */
-    private static boolean checkFile(DomainRules rules, File target, List<MatchResult> matchingFiles) {
+    @VisibleForTesting
+    public static boolean checkFiles(DomainRules rules, File target, List<MatchResult> matchingFiles) {
         boolean hasMatch = false;
         if (!target.exists()) {
             throw new IllegalArgumentException("The file does not exist! '" + target.getAbsolutePath() + "'");
@@ -84,13 +86,14 @@ public class Main {
         }
         else if (target.isDirectory()) {
             for (File subTarget : Objects.requireNonNull(target.listFiles())) {
-                hasMatch |= checkFile(rules, subTarget, matchingFiles);
+                hasMatch |= checkFiles(rules, subTarget, matchingFiles);
             }
         }
         return hasMatch;
     }
 
-    private static class MatchResult {
+    @VisibleForTesting
+    public static class MatchResult {
         private final File file;
         private final ZoneIdentifier zoneId;
 
