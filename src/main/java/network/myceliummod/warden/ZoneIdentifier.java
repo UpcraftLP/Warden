@@ -8,11 +8,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 
-public record ZoneIdentifier(@Nullable String host, @Nullable String referrer) {
+public final class ZoneIdentifier {
 
     private static final String ZONE_IDENTIFIER = ":Zone.Identifier";
     private static final String REFERRER_URL = "ReferrerUrl=";
     private static final String HOST_URL = "HostUrl=";
+
+    @Nullable
+    private final String host;
+
+    @Nullable
+    private final String referrer;
+
+    public ZoneIdentifier(@Nullable String host, @Nullable String referrer) {
+        this.host = host;
+        this.referrer = referrer;
+    }
 
     /**
      * Gets the url that the file was downloaded with.
@@ -30,6 +41,7 @@ public record ZoneIdentifier(@Nullable String host, @Nullable String referrer) {
      *
      * @return The referrer to the url that the file was downloaded with, or null if that data is not available.
      */
+    @Nullable
     public String getReferrer() {
         return this.referrer;
     }
@@ -47,7 +59,7 @@ public record ZoneIdentifier(@Nullable String host, @Nullable String referrer) {
      * @return If the zone identifier exists it will be parsed and returned, otherwise this will be null.
      */
     @Nullable
-    public static ZoneIdentifier from(File file) {
+    public static ZoneIdentifier readFromFile(File file) {
         // We are using the NIO file API because the paths API does not support ADS and the attributes
         // API made the program 9x slower.
         final File zoneFile = new File(file.getAbsolutePath() + ZONE_IDENTIFIER);

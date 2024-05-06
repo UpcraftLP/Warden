@@ -74,7 +74,7 @@ public class Main {
             throw new IllegalArgumentException("The file does not exist! '" + target.getAbsolutePath() + "'");
         }
         else if (target.isFile()) {
-            final ZoneIdentifier zoneId = ZoneIdentifier.from(target);
+            final ZoneIdentifier zoneId = ZoneIdentifier.readFromFile(target);
             if (zoneId != null && rules.test(zoneId)) {
                 matchingFiles.add(new MatchResult(target, zoneId));
                 hasMatch = true;
@@ -88,6 +88,21 @@ public class Main {
         return hasMatch;
     }
 
-    private record MatchResult(File file, ZoneIdentifier zoneId) {
+    private static class MatchResult {
+        private final File file;
+        private final ZoneIdentifier zoneId;
+
+        public MatchResult(File file, ZoneIdentifier zoneId) {
+            this.file = file;
+            this.zoneId = zoneId;
+        }
+
+        public File file() {
+            return file;
+        }
+
+        public ZoneIdentifier zoneId() {
+            return zoneId;
+        }
     }
 }

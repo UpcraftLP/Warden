@@ -11,7 +11,8 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        // we want to support older MC versions
+        languageVersion = JavaLanguageVersion.of(8)
     }
     withSourcesJar()
 }

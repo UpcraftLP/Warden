@@ -2,11 +2,9 @@ package network.myceliummod.warden;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -17,23 +15,7 @@ import java.util.function.Predicate;
  */
 public class DomainRules {
 
-    private final Set<Rule> rules = new ObjectOpenHashSet<>();
-
-    public record Rule(
-            String domain,
-            // Matching subdomains was faster this way. This trades a bit of ram that will soon be freed
-            // for a reduced execution time.
-            String subdomain) implements Predicate<String> {
-
-        public static Rule of(String domain) {
-            return new Rule(domain, '.' + domain);
-        }
-
-        @Override
-        public boolean test(String toTest) {
-            return toTest.equals(domain()) || toTest.endsWith(subdomain());
-        }
-    }
+    private final Set<DomainRule> rules = new ObjectOpenHashSet<>();
 
     /**
      * Creates a new set of rules that contains a subset of the domains catalogued by the stop mod reposts org.
@@ -56,10 +38,10 @@ public class DomainRules {
     }
 
     public void addRule(String domain) {
-        this.addRule(Rule.of(domain));
+        this.addRule(new SimpleDomainRule(domain));
     }
 
-    public void addRule(Rule rule) {
+    public void addRule(DomainRule rule) {
         this.rules.add(rule);
     }
 
@@ -81,12 +63,16 @@ public class DomainRules {
      */
     public boolean testDomain(String domain) {
         if (domain != null) {
-            for (Rule rule : this.rules) { // This was significantly faster than streams.
+            for (DomainRule rule : this.rules) { // This was significantly faster than streams.
                 if (rule.test(domain)) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public int size() {
+        return rules.size();
     }
 }
