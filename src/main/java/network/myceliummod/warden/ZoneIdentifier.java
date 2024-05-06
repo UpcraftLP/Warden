@@ -1,30 +1,18 @@
 package network.myceliummod.warden;
 
-import com.sun.jndi.toolkit.url.Uri;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 
-public final class ZoneIdentifier {
+public record ZoneIdentifier(@Nullable String host, @Nullable String referrer) {
 
     private static final String ZONE_IDENTIFIER = ":Zone.Identifier";
     private static final String REFERRER_URL = "ReferrerUrl=";
     private static final String HOST_URL = "HostUrl=";
-
-    @Nullable
-    private final String host;
-
-    @Nullable
-    private final String referrer;
-
-    private ZoneIdentifier(@Nullable String host, @Nullable String referrer) {
-
-        this.host = host;
-        this.referrer = referrer;
-    }
 
     /**
      * Gets the url that the file was downloaded with.
@@ -59,7 +47,7 @@ public final class ZoneIdentifier {
      * @return If the zone identifier exists it will be parsed and returned, otherwise this will be null.
      */
     @Nullable
-    public static ZoneIdentifier of(File file) {
+    public static ZoneIdentifier from(File file) {
         // We are using the NIO file API because the paths API does not support ADS and the attributes
         // API made the program 9x slower.
         final File zoneFile = new File(file.getAbsolutePath() + ZONE_IDENTIFIER);
@@ -86,9 +74,8 @@ public final class ZoneIdentifier {
     }
 
     /**
-     * Attempts to strip the protocol and path from the domain. This is like {@link Uri#getHost()} but slightly faster.
+     * Attempts to strip the protocol and path from the domain. This is like {@link URI#getHost()} but slightly faster.
      *
-     * @param urlString
      * @return The stripped string, or the input string if info could not be stripped.
      */
     private static String stripInfo(String urlString) {
